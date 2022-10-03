@@ -31,13 +31,13 @@ function App(props) {
   return (
     <BrowserRouter>
       <AppRouting />
-      <Notification status={snacks.status} msg={snacks.message} toggle={handleClose} />
+      <Notification status={snacks?.status} msg={snacks?.message} toggle={handleClose} />
     </BrowserRouter>
   );
 }
 
 const mapStateToProps = (state) => {
-  const snacks = state.snacks;
+  const snacks = state?.snacks;
   return { snacks };
 };
 

@@ -1,18 +1,23 @@
-import { useState } from "react";
-import { Typography, styled } from "@mui/material";
+// PACKAGES
 import * as React from "react";
-import Button from "@mui/material/Button";
-import CreateModal from "../../components/create-modal";
-import "./home-screen.scss";
+import { useState } from "react";
+import { useAuthenticationStatus } from "@nhost/react";
+import { useNavigate } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 
-const strings = [
-  "public static void main()",
-  "using namespace std;",
-  "console.log('javascript')",
-  "lambda x: x == 'python'",
-  "interface  <span style='color: #10f010'>Paper</span> extends <span style='color: #10f010'>Typescript</span>",
-];
+// COMPONENTS
+import { Typography, styled } from "@mui/material";
+import Button from "@mui/material/Button";
+import CreateModal from "../../components/create-modal";
+
+// STYLES
+import "./home-screen.scss";
+
+// REDUCER
+import { createPaper } from "reducer/CodeReducer";
+
+// UTILS
+import strings from "./type-strings";
 
 const CustomTypography = styled(Typography)(({ theme }) => ({
   ...theme,
@@ -34,10 +39,21 @@ const CustomTypography = styled(Typography)(({ theme }) => ({
 
 export default function HomeScreen() {
   const [createPaperModal, setCreatePaperModal] = useState(false);
+  const { isAuthenticated, isLoading } = useAuthenticationStatus();
+  const navigate = useNavigate();
 
   const toggleCreateModal = (e) => {
     setCreatePaperModal(!createPaperModal);
   };
+
+  const handlePaperCreate = (paperInfo) => {
+
+  }
+
+  if (isLoading) return null;
+  if (isAuthenticated) {
+    return navigate("/home");
+  }
 
   return (
     <>
@@ -68,7 +84,11 @@ export default function HomeScreen() {
           </div>
         </div>
       </div>
-      <CreateModal open={createPaperModal} toggle={toggleCreateModal} />
+      <CreateModal
+        handleCreateButton={handlePaperCreate}
+        open={createPaperModal}
+        toggle={toggleCreateModal}
+      />
     </>
   );
 }

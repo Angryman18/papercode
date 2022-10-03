@@ -1,16 +1,40 @@
-import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import LoadingButton from "@mui/lab/LoadingButton";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import { Box, Button } from "@mui/material";
+// PACKAGES
+import { useState } from "react";
 
-const CreateModal = ({open, toggle}) => {
+// COMPONENTS
+import {
+  Box,
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+} from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+
+const defaultState = {
+  paperLang: "",
+  paperName: "",
+};
+
+const CreateModal = ({ open, toggle, loading, handleCreateButton }) => {
+  const [paperInfo, setPaperInfo] = useState({ ...defaultState });
+
+  const getInputValue = (e) => {
+    setPaperInfo((pre) => ({ ...pre, [e.target.name]: e.target.value }));
+  };
+
+  const createPaperHandler = (e) => {
+    e.preventDefault();
+    if (!paperInfo.paperLang) return;
+    handleCreateButton(paperInfo);
+  };
+
   return (
     <Dialog maxWidth='xs' fullWidth={true} open={open} onClose={toggle}>
       <DialogTitle>Create a Blank Paper</DialogTitle>
@@ -22,6 +46,8 @@ const CreateModal = ({open, toggle}) => {
               labelId='demo-simple-select-label'
               id='demo-simple-select'
               label='Paper Language'
+              name='paperLang'
+              onChange={getInputValue}
             >
               <MenuItem value='javascript'>NodeJS</MenuItem>
               <MenuItem value='typescript'>Typescript</MenuItem>
@@ -36,19 +62,32 @@ const CreateModal = ({open, toggle}) => {
             label='Paper Name'
             type='text'
             fullWidth
-            helperText="not mandatory"
+            helperText='not mandatory'
             variant='outlined'
+            name='paperName'
+            value={paperInfo.paperName}
+            onChange={getInputValue}
           />
         </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={toggle}>Cancel</Button>
-        <LoadingButton loading={false} variant='contained' onClick={toggle}>
+        <LoadingButton
+          loading={loading}
+          variant='contained'
+          disabled={!paperInfo.paperLang}
+          onClick={createPaperHandler}
+        >
           Create Paper
         </LoadingButton>
       </DialogActions>
     </Dialog>
   );
+};
+
+CreateModal.defaultProps = {
+  loading: false,
+  handleCreateButton: () => {},
 };
 
 export default CreateModal;

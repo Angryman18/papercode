@@ -1,8 +1,17 @@
 import SnackReducer from "./SnackReducer";
+import CodeReducer from "./CodeReducer";
 import { combineReducers } from "redux";
 
-const reducer = combineReducers({
+const totalReducers = combineReducers({
   snacks: SnackReducer,
+  codeEnv: CodeReducer,
 });
 
-export default reducer;
+const rootReducer = (state, action) => {
+  if (action.type === "LOGOUT") {
+    return [{}];
+  }
+  return totalReducers(state, action);
+};
+
+export default rootReducer;
