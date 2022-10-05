@@ -3,10 +3,12 @@ const { createSlice } = require("@reduxjs/toolkit");
 const initialState = {
   paperCode: "",
   paperLang: "",
+  paperExt: "",
   createdAt: "",
   paperName: "",
   paperDesc: "",
   paperOwner: "",
+  paperSync: false,
 };
 
 const CodeEnviroment = createSlice({
@@ -14,11 +16,15 @@ const CodeEnviroment = createSlice({
   initialState,
   reducers: {
     createPaper: (state, { payload }) => {
-      return { ...payload, createdAt: new Date() };
+      console.log(payload)
+      return { ...state, ...payload, createdAt: new Date() };
+    },
+    writeCode: (state, { payload }) => {
+      state.paperCode = payload.paperCode;
     },
   },
 });
 
-const { createPaper } = CodeEnviroment.actions;
+const { createPaper, writeCode } = CodeEnviroment.actions;
 export default CodeEnviroment.reducer;
-export { createPaper };
+export { createPaper, writeCode };

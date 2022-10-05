@@ -1,5 +1,5 @@
 // PACKAGES
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // COMPONENTS
 import {
@@ -17,6 +17,9 @@ import {
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 
+// UTILS
+import { Languages } from "helper/languages";
+
 const defaultState = {
   paperLang: "",
   paperName: "",
@@ -29,9 +32,15 @@ const CreateModal = ({ open, toggle, loading, handleCreateButton }) => {
     setPaperInfo((pre) => ({ ...pre, [e.target.name]: e.target.value }));
   };
 
+  useEffect(() => {
+    setPaperInfo({ ...defaultState });
+  }, [open]);
+
   const createPaperHandler = (e) => {
     e.preventDefault();
-    if (!paperInfo.paperLang) return;
+    if (!paperInfo.paperLang || !paperInfo.paperName) return;
+    const paperLangExt = Languages.find(i => i.name === paperInfo.paperLang).ext
+    paperInfo.paperLangExt = paperLangExt
     handleCreateButton(paperInfo);
   };
 
@@ -48,12 +57,11 @@ const CreateModal = ({ open, toggle, loading, handleCreateButton }) => {
               label='Paper Language'
               name='paperLang'
               onChange={getInputValue}
+              value={paperInfo.paperLang}
             >
-              <MenuItem value='javascript'>NodeJS</MenuItem>
-              <MenuItem value='typescript'>Typescript</MenuItem>
-              <MenuItem value='python'>Python</MenuItem>
-              <MenuItem value='java'>Java</MenuItem>
-              <MenuItem value='c++'>C++</MenuItem>
+              {Languages.map((item) => {
+                return <MenuItem key={item.ext} value={item.name}>{item.display}</MenuItem>;
+              })}
             </Select>
           </FormControl>
           <TextField
@@ -62,7 +70,7 @@ const CreateModal = ({ open, toggle, loading, handleCreateButton }) => {
             label='Paper Name'
             type='text'
             fullWidth
-            helperText='not mandatory'
+            helperText='* name of your file'
             variant='outlined'
             name='paperName'
             value={paperInfo.paperName}
@@ -75,7 +83,7 @@ const CreateModal = ({ open, toggle, loading, handleCreateButton }) => {
         <LoadingButton
           loading={loading}
           variant='contained'
-          disabled={!paperInfo.paperLang}
+          disabled={!paperInfo.paperLang || paperInfo.paperName.length < 3}
           onClick={createPaperHandler}
         >
           Create Paper

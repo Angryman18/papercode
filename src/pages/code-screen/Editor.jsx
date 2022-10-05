@@ -1,17 +1,27 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
+import { writeCode } from "reducer/CodeReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { useTransition } from "react";
 
 const CodeEditor = () => {
-  const [code, setCode] = useState("");
+  const writtenCode = useSelector(state => state.codeEnv.paperCode)
+  const language = useSelector(state => state.codeEnv.paperLang)
+  const [pending, delay] = useTransition()
+  const dispatch = useDispatch()
+
   const handleEditorChange = (val, e) => {
-    setCode(val);
+    delay(() => {
+      dispatch(writeCode({paperCode: val}))
+    })
   };
+
   return (
     <Editor
       height='80vh'
       width='60vw'
-      defaultLanguage='javascript'
-      value={code}
+      defaultLanguage={language}
+      value={writtenCode}
       onChange={handleEditorChange}
       theme='vs-dark'
       options={{

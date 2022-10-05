@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useRoutes } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute.js";
+import PublicRoute from "./PublicRoute.js";
 import Layout from "./Layout.jsx";
 import HomeScreen from "pages/home-screen/index.jsx";
 import CodeScreen from "pages/code-screen/index.jsx";
@@ -14,11 +15,11 @@ export default function AppRouting() {
       children: [
         {
           path: "/",
-          element: <HomeScreen />,
+          element: <PublicRoute Component={HomeScreen} />
         },
         {
           path: "/code",
-          element: <CodeScreen />,
+          element: <PublicRoute Component={CodeScreen} />,
         },
         {
           path: "/home",

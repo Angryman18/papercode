@@ -1,12 +1,13 @@
 // PACKAGES
 import * as React from "react";
 import { useState } from "react";
-import { useAuthenticationStatus } from "@nhost/react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Typewriter from "typewriter-effect";
+import { v4 as uuid } from "uuid";
+import { useDispatch } from "react-redux";
 
 // COMPONENTS
-import { Typography, styled } from "@mui/material";
+import { Typography, styled, Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import CreateModal from "../../components/create-modal";
 
@@ -18,28 +19,29 @@ import { createPaper } from "reducer/CodeReducer";
 
 // UTILS
 import strings from "./type-strings";
+import { pushNotification } from "actions/snack.action";
 
-const CustomTypography = styled(Typography)(({ theme }) => ({
+const CustomTypography = styled(Box)(({ theme }) => ({
   ...theme,
   fontFamily: "Fira Code",
   color: "white",
   [theme.breakpoints.between("xs", "sm")]: {
-    fontSize: "1.5rem",
-  },
-  [theme.breakpoints.up("sm")]: {
     fontSize: "2rem",
   },
+  [theme.breakpoints.up("sm")]: {
+    fontSize: "3rem",
+  },
   [theme.breakpoints.up("lg")]: {
-    fontSize: "3.75rem",
+    fontSize: "4rem",
   },
   [theme.breakpoints.up("xl")]: {
-    fontSize: "5.5rem",
+    fontSize: "6.5rem",
   },
 }));
 
-export default function HomeScreen() {
+export default function HomeScreen({ isAuthenticated }) {
   const [createPaperModal, setCreatePaperModal] = useState(false);
-  const { isAuthenticated, isLoading } = useAuthenticationStatus();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const toggleCreateModal = (e) => {
@@ -47,12 +49,15 @@ export default function HomeScreen() {
   };
 
   const handlePaperCreate = (paperInfo) => {
+    paperInfo.paperSync = false;
+    paperInfo.paperCode = "";
+    dispatch(createPaper(paperInfo));
+    navigate("/code");
+    pushNotification("Paper Created Successfully.");
+  };
 
-  }
-
-  if (isLoading) return null;
   if (isAuthenticated) {
-    return navigate("/home");
+    return <Navigate to='/home' />;
   }
 
   return (

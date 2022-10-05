@@ -7,8 +7,14 @@ const CustomTypography = styled(Typography)(({ theme }) => ({
   ...theme,
   color: "white",
   fontFamily: "Roboto",
+  verticalAlign: 'middle',
+  padding: 16,
+  marginLeft: -32,
+  cursor: 'pointer',
+  backgroundColor: theme.palette.primary.main,
   [theme.breakpoints.between("xs", "sm")]: {
     fontSize: "1.7rem",
+    padding: 20
   },
   [theme.breakpoints.up("sm")]: {
     fontSize: "2rem",
@@ -24,8 +30,8 @@ export default function MaterialNavbar() {
 
   return (
     <Fragment>
-      <Box className='flex justify-between px-8 md:px-16 h-20 items-center'>
-        <CustomTypography color='white'>Paper Code</CustomTypography>
+      <Box className='flex justify-between px-8 md:px-16 h-16 mobile:h-20 items-center'>
+        <CustomTypography>Paper Code</CustomTypography>
         <SignedComponent handleModalToggle={handleModalToggle} />
       </Box>
       <SignInModal open={showSignInModal} toggle={handleModalToggle} />
@@ -37,8 +43,6 @@ const SignedComponent = ({ handleModalToggle }) => {
   const { isAuthenticated, isLoading } = useAuthenticationStatus();
   const userData = useUserData();
   const { signOut } = useSignOut();
-
-  console.log(userData)
 
   const handleSignOut = () => {
     signOut();

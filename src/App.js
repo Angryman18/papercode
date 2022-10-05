@@ -1,7 +1,3 @@
-import { useEffect, useState } from "react";
-import Editor from "@monaco-editor/react";
-import graphqlQuery from "./service/graphqlQuery";
-import { getCodeQuery } from "./service/query";
 import AppRouting from "router/react-router";
 import { BrowserRouter, Routes } from "react-router-dom";
 import { connect } from "react-redux";
@@ -23,6 +19,10 @@ function App(props) {
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
+      const showNotificationGlimpse = setTimeout(() => {
+        deleteNotifications();
+        clearTimeout(showNotificationGlimpse)
+      }, 1000);
       return;
     }
     deleteNotifications();

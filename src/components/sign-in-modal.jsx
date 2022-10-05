@@ -38,7 +38,7 @@ const SignInModal = ({ open, toggle }) => {
             provider='github'
             handleAuth={handleAuthentication}
           />
-          <Typography sx={{ textAlign: "right" }} variant='caption' display='block' gutterBottom>
+          <Typography color='GrayText' sx={{ textAlign: "right" }} variant='caption' display='block' gutterBottom>
             Powered By Nhost
           </Typography>
         </Box>

@@ -6,7 +6,7 @@ const PrivateRoute = ({ Component, ...rest }) => {
 
   if (isLoading) return null;
   if (!isAuthenticated) return <Navigate to='/' replace={true} />;
-  if (isAuthenticated && !isLoading) return <Component {...rest} />;
+  if (isAuthenticated && !isLoading) return <Component isAuthenticated={isAuthenticated} {...rest} />;
 };
 
 export default PrivateRoute;
