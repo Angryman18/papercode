@@ -1,20 +1,21 @@
-import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import { writeCode } from "reducer/CodeReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { useTransition } from "react";
 
 const CodeEditor = () => {
-  const writtenCode = useSelector(state => state.codeEnv.paperCode)
-  const language = useSelector(state => state.codeEnv.paperLang)
-  const [pending, delay] = useTransition()
-  const dispatch = useDispatch()
+  const writtenCode = useSelector((state) => state.codeEnv.paperCode);
+  const language = useSelector((state) => state.codeEnv.paperLang);
+  const dispatch = useDispatch();
 
   const handleEditorChange = (val, e) => {
-    delay(() => {
-      dispatch(writeCode({paperCode: val}))
-    })
+    dispatch(writeCode({ paperCode: val }));
   };
+
+  function handleEditorMount(editor, monaco) {
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+      alert("you've pressed the very key combination"); 
+    });
+  }
 
   return (
     <Editor
@@ -24,16 +25,18 @@ const CodeEditor = () => {
       value={writtenCode}
       onChange={handleEditorChange}
       theme='vs-dark'
+      onMount={handleEditorMount}
       options={{
         quickSuggestions: true,
         lineHeight: 20,
-        fontSize: 16,
+        fontSize: 17,
         formatOnPaste: true,
-        fontFamily: 'operator mono',
+        fontFamily: "operator mono",
         smoothScrolling: true,
         stablePeek: true,
         showUnused: true,
         mouseWheelZoom: true,
+        wordBasedSuggestionsOnlySameLanguage: true,
         minimap: { enabled: false },
       }}
     />
