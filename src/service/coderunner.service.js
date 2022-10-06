@@ -6,7 +6,7 @@ export const registerExecutionToken = async (data) => {
   const options = {
     method: "POST",
     url: process.env.REACT_APP_CODERUNNER_ENDPOINT,
-    params: { base64_encoded: "true", wait: "true" },
+    params: { base64_encoded: true, wait: true },
     headers: {
       "content-type": "application/json",
       "X-RapidAPI-Key": process.env.REACT_APP_X_RAPID_APIKEY,
@@ -32,4 +32,19 @@ export const tokenToOutput = async (token) => {
   return Promise.resolve(response.data);
 };
 
-
+export const resolvedTokenInfo = async (token) => {
+  let status = 1;
+  let resp = null;
+  while (status === 1) {
+    try {
+      const response = await tokenToOutput(token);
+      status = response?.status?.id;
+      resp = response;
+    } catch (err) {
+      console.log(err);
+      break;
+    }
+  };
+  console.log('response is', resp)
+  return resp;
+};

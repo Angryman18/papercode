@@ -1,11 +1,13 @@
 import Editor from "@monaco-editor/react";
 import { writeCode } from "reducer/CodeReducer";
 import { useDispatch, useSelector } from "react-redux";
+import useCodeRunner from "hooks/useCodeRunner";
 
 const CodeEditor = () => {
   const writtenCode = useSelector((state) => state.codeEnv.paperCode);
   const language = useSelector((state) => state.codeEnv.paperLang);
   const dispatch = useDispatch();
+  const [executeCode] = useCodeRunner(dispatch)
 
   const handleEditorChange = (val, e) => {
     dispatch(writeCode({ paperCode: val }));
@@ -13,9 +15,10 @@ const CodeEditor = () => {
 
   function handleEditorMount(editor, monaco) {
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-      alert("you've pressed the very key combination"); 
+      executeCode({language_id: 63, sourceCode: writtenCode})
     });
   }
+  console.log(writtenCode)
 
   return (
     <Editor
