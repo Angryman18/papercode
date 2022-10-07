@@ -12,8 +12,6 @@ const File = () => {
   const paperLang = useSelector((state) => state.codeEnv?.paperLang);
   const paperLangExt = useSelector((state) => state?.codeEnv?.paperLangExt);
 
-  console.log('re-rendered file');
-
   let IconComponent = (props) => {
     switch (paperLangExt) {
       case ext.JAVASCRIPT:

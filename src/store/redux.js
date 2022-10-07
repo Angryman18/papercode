@@ -3,12 +3,12 @@ import { persistStore, persistReducer } from "redux-persist";
 import rootReducer from "reducer/root-reducer";
 import storage from "redux-persist/lib/storage";
 
-const persistConfig = { key: "root", storage };
+const persistConfig = { key: "root", version: 1, storage, blacklist: ["output"] };
 
-const PersisReducers = persistReducer(persistConfig, rootReducer);
+const PersistReducers = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
-  reducer: PersisReducers,
+  reducer: PersistReducers,
   middleware: (defaultMiddleware) =>
     defaultMiddleware({
       serializableCheck: false,

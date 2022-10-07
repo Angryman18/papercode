@@ -3,7 +3,7 @@ const { createSlice } = require("@reduxjs/toolkit");
 const initialState = {
   paperCode: "",
   paperLang: "",
-  paperExt: "",
+  paperLangExt: "",
   createdAt: "",
   paperName: "",
   paperDesc: "",
