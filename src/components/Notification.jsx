@@ -10,7 +10,7 @@ const Notification = ({ status, toggle, msg }) => {
   return (
     <Snackbar
       open={status}
-      autoHideDuration={6000}
+      autoHideDuration={5000}
       onClose={toggle}
       TransitionComponent={Slide}
       resumeHideDuration={3000}

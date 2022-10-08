@@ -12,7 +12,7 @@ const File = () => {
   const paperLang = useSelector((state) => state.codeEnv?.paperLang);
   const paperLangExt = useSelector((state) => state?.codeEnv?.paperLangExt);
 
-  let IconComponent = (props) => {
+  const IconComponent = (props) => {
     switch (paperLangExt) {
       case ext.JAVASCRIPT:
         return <DiJavascript1 {...props} />;
@@ -42,6 +42,7 @@ const File = () => {
         borderRight: "3px solid rgba(255,255,255,0.1)",
         backgroundColor: "1E1E1E",
         p: 1,
+        fontFamily: 'Fira Code'
       }}
     >
       <Box
@@ -49,7 +50,7 @@ const File = () => {
         sx={{ color: "#fff", px: 1, py: 0.5, cursor: "pointer" }}
       >
         <IconComponent className='h-4.5 w-4.5' />
-        {paperName}.{paperLangExt.slice(0,10)}
+        {paperName.slice(0,10)}.{paperLangExt}
       </Box>
     </Box>
   );

@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 
 const OutputBox = styled(Box)(({ theme }) => ({
   ...theme,
+  fontFamily: "Fira Code",
   [theme.breakpoints.up("lg")]: {
     width: "400px",
   },
@@ -11,22 +12,41 @@ const OutputBox = styled(Box)(({ theme }) => ({
   },
 }));
 
+const MTypography = styled(Typography)(({theme}) => ({
+  ...theme,
+  fontFamily: 'Fira Code'
+}))
+
 const Output = () => {
   const outputResult = useSelector((state) => state.output);
 
   const showOutput = outputResult.status?.id !== 3 ? outputResult?.stderr : outputResult?.stdout;
   const status = outputResult.status?.id;
 
+  const OutputLoader = () => {
+    if (outputResult?.loading) {
+      return (
+        <MTypography sx={{ fontSize: "0.9rem" }}>
+          Running Code...
+        </MTypography>
+      );
+    } else {
+      return (
+        <MTypography
+          sx={{fontSize: "0.9rem" }}
+          color={status === 3 ? "#6abe83" : status === 1 ? "yellow" : "red"}
+        >
+          {showOutput}
+        </MTypography>
+      );
+    }
+  };
+
   return (
     <OutputBox sx={{ px: 2 }}>
-      <Typography variant='h5'>Output</Typography>
-      <Typography variant='caption'>Presss Ctrl + Enter to run your code</Typography>
-      <Typography
-        sx={{ fontFamily: "monospace", fontSize: "medium" }}
-        color={status === 3 ? "green" : status === 1 ? "yellow" : "red"}
-      >
-        {showOutput}
-      </Typography>
+      <MTypography sx={{fontWeight: 'bold'}} variant='h5'>Output</MTypography>
+      <MTypography variant='caption'>Presss Ctrl + Enter to run your code</MTypography>
+      <OutputLoader />
     </OutputBox>
   );
 };

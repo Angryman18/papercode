@@ -16,7 +16,6 @@ const CodeEnviroment = createSlice({
   initialState,
   reducers: {
     createPaper: (state, { payload }) => {
-      console.log(payload)
       return { ...state, ...payload, createdAt: new Date() };
     },
     writeCode: (state, { payload }) => {
