@@ -1,13 +1,33 @@
+// PACKAGES
 import { useState, Fragment } from "react";
+import { useDispatch } from "react-redux";
 
 import { Box, Button } from "@mui/material";
 import CreateModal from "components/create-modal.jsx";
 
+import { registerPaperInfo } from "reducer/CodeReducer";
+import { useUserId } from "@nhost/react";
+import { useNavigate } from "react-router-dom";
+
 const Dashboard = () => {
   const [createModal, setCreateModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const userId = useUserId();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleCreateModal = () => {
     setCreateModal(!createModal);
+  };
+
+  const handlePaperCreate = async (paperInfo) => {
+    const { paperName, paperLang } = paperInfo;
+    const preaperObj = { paperName, paperLang, paperOwner: userId};
+    setLoading(true);
+    const resp = await dispatch(registerPaperInfo(preaperObj));
+    console.log(resp);
+    setLoading(false);
+    // return navigate("/code");
   };
 
   return (
@@ -18,7 +38,11 @@ const Dashboard = () => {
         </Button>
         <hr className='mt-8' />
       </Box>
-      <CreateModal open={createModal} toggle={handleCreateModal} />
+      <CreateModal
+        open={createModal}
+        handleCreateButton={handlePaperCreate}
+        toggle={handleCreateModal}
+      />
     </Fragment>
   );
 };

@@ -1,20 +1,21 @@
-import { Button, styled, Typography, Box, Stack } from "@mui/material";
+import { Button, styled, Typography, Box, Stack,} from "@mui/material";
 import { useState, Fragment } from "react";
 import SignInModal from "./sign-in-modal";
 import { useAuthenticationStatus, useUserData, useSignOut } from "@nhost/react";
+import PaperInfo from './PaperInfo'
+
 
 const CustomTypography = styled(Typography)(({ theme }) => ({
   ...theme,
   color: "white",
   fontFamily: "Roboto",
-  verticalAlign: 'middle',
+  verticalAlign: "middle",
   padding: 16,
   marginLeft: -32,
-  cursor: 'pointer',
-  backgroundColor: theme.palette.primary.main,
+  cursor: "pointer",
   [theme.breakpoints.between("xs", "sm")]: {
     fontSize: "1.7rem",
-    padding: 20
+    padding: 20,
   },
   [theme.breakpoints.up("sm")]: {
     fontSize: "2rem",
@@ -31,13 +32,18 @@ export default function MaterialNavbar() {
   return (
     <Fragment>
       <Box className='flex justify-between px-8 md:px-16 h-16 mobile:h-20 items-center'>
-        <CustomTypography>Paper Code</CustomTypography>
+        <Stack direction='row' alignItems='center' spacing={1} sx={{ px: 2, color: "white" }}>
+          <CustomTypography>Paper Code</CustomTypography>
+          <PaperInfo />
+        </Stack>
         <SignedComponent handleModalToggle={handleModalToggle} />
       </Box>
       <SignInModal open={showSignInModal} toggle={handleModalToggle} />
     </Fragment>
   );
 }
+
+
 
 const SignedComponent = ({ handleModalToggle }) => {
   const { isAuthenticated, isLoading } = useAuthenticationStatus();
@@ -46,7 +52,7 @@ const SignedComponent = ({ handleModalToggle }) => {
 
   const handleSignOut = () => {
     signOut();
-  }
+  };
 
   if (isLoading) return null;
   if (isAuthenticated) {
@@ -58,7 +64,9 @@ const SignedComponent = ({ handleModalToggle }) => {
           className='w-12 h-12 rounded-full border-white bg-white'
         />
         <Box>
-          <Typography color='white'><b>Hello,</b> {userData?.displayName.split(' ')[0]}</Typography>
+          <Typography color='white'>
+            <b>Hello,</b> {userData?.displayName.split(" ")[0]}
+          </Typography>
           <Button
             sx={{
               backgroundColor: "gray",

@@ -1,33 +1,25 @@
 // PACKAGES
-import { useCallback } from "react";
 import Editor from "@monaco-editor/react";
 import { useDispatch, useSelector } from "react-redux";
 // MISC
 import { writeCode } from "reducer/CodeReducer";
-import useCodeRunner from "hooks/useCodeRunner";
-import { Languages } from "helper/languages";
+import { utilStateSetter } from "reducer/UtilsReducer";
 
 const CodeEditor = () => {
   const writtenCode = useSelector((state) => state.codeEnv.paperCode);
   const language = useSelector((state) => state.codeEnv.paperLang);
-  const paperLang = useSelector(state => state.codeEnv.paperLangExt)
   const dispatch = useDispatch();
-  const [executeCode] = useCodeRunner(dispatch);
-
-  const language_id = Languages.find((i) => i.ext === paperLang).language_id;
 
   const handleEditorChange = (val, e) => {
     dispatch(writeCode({ paperCode: val }));
   };
 
-  const executeFreshCode = useCallback(() => {
-    return executeCode({ language_id, sourceCode: writtenCode });
-  }, [writtenCode, language_id, executeCode]);
-
   function handleEditorMount(editor, monaco) {
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, executeFreshCode);
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+      dispatch(utilStateSetter({ state: "runner", stateValue: true }));
+    });
   }
-  
+
   return (
     <Editor
       height='80vh'

@@ -1,4 +1,12 @@
-const { createSlice } = require("@reduxjs/toolkit");
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import graphqlQuery from "service/graphqlQuery";
+import { createPaper as createPaperQuery } from "service/query";
+
+export const registerPaperInfo = createAsyncThunk("create-paper", async (data) => {
+  const response = await graphqlQuery(createPaperQuery(data)).catch((err) => Promise.reject(err));
+  console.log(data)
+  return Promise.resolve(response);
+});
 
 const initialState = {
   paperCode: "",
@@ -21,9 +29,17 @@ const CodeEnviroment = createSlice({
     writeCode: (state, { payload }) => {
       state.paperCode = payload.paperCode;
     },
+    codeEnvStateUpdator: (state, { payload }) => {
+      state[payload.state] = payload.stateValue;
+    },
+  },
+  extraReducers: {
+    [registerPaperInfo.fulfilled]: (state, { payload }) => {
+      return { ...payload };
+    },
   },
 });
 
-const { createPaper, writeCode } = CodeEnviroment.actions;
+const { createPaper, writeCode, codeEnvStateUpdator } = CodeEnviroment.actions;
 export default CodeEnviroment.reducer;
-export { createPaper, writeCode };
+export { createPaper, writeCode, codeEnvStateUpdator };

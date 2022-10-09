@@ -3,11 +3,10 @@ import * as React from "react";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import Typewriter from "typewriter-effect";
-import { v4 as uuid } from "uuid";
 import { useDispatch } from "react-redux";
 
 // COMPONENTS
-import { Typography, styled, Box } from "@mui/material";
+import { styled, Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import CreateModal from "../../components/create-modal";
 

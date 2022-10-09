@@ -44,7 +44,6 @@ export const resolvedTokenInfo = async (token) => {
       console.log(err);
       break;
     }
-  };
-  console.log('response is', resp)
+  }
   return resp;
 };

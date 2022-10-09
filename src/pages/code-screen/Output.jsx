@@ -12,28 +12,32 @@ const OutputBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const MTypography = styled(Typography)(({theme}) => ({
+const MTypography = styled(Typography)(({ theme }) => ({
   ...theme,
-  fontFamily: 'Fira Code'
-}))
+  fontFamily: "Fira Code",
+  whiteSpace: "pre-line;",
+}));
 
 const Output = () => {
   const outputResult = useSelector((state) => state.output);
 
-  const showOutput = outputResult.status?.id !== 3 ? outputResult?.stderr : outputResult?.stdout;
+  let showOutput;
+  switch (outputResult.status) {
+    case 11:
+      showOutput = outputResult.stdout;
+    default:
+      showOutput = outputResult.stdout;
+  }
+
   const status = outputResult.status?.id;
 
   const OutputLoader = () => {
     if (outputResult?.loading) {
-      return (
-        <MTypography sx={{ fontSize: "0.9rem" }}>
-          Running Code...
-        </MTypography>
-      );
+      return <MTypography sx={{ fontSize: "0.9rem" }}>Running Code...</MTypography>;
     } else {
       return (
         <MTypography
-          sx={{fontSize: "0.9rem" }}
+          sx={{ fontSize: "0.9rem" }}
           color={status === 3 ? "#6abe83" : status === 1 ? "yellow" : "red"}
         >
           {showOutput}
@@ -44,7 +48,9 @@ const Output = () => {
 
   return (
     <OutputBox sx={{ px: 2 }}>
-      <MTypography sx={{fontWeight: 'bold'}} variant='h5'>Output</MTypography>
+      <MTypography sx={{ fontWeight: "bold" }} variant='h5'>
+        Output
+      </MTypography>
       <MTypography variant='caption'>Presss Ctrl + Enter to run your code</MTypography>
       <OutputLoader />
     </OutputBox>
