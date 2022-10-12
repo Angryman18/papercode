@@ -1,12 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import graphqlQuery from "service/graphqlQuery";
-import { createPaper as createPaperQuery } from "service/query";
+import { createPaper as createPaperQuery, getSinglePaperInfo } from "service/query";
 
-export const registerPaperInfo = createAsyncThunk("create-paper", async (data) => {
-  const response = await graphqlQuery(createPaperQuery(data)).catch((err) => Promise.reject(err));
-  console.log(data)
+export const registerPaperInfo = createAsyncThunk("create-paper", async ({ data, token }) => {
+  const response = await graphqlQuery(createPaperQuery(data), token).catch((err) =>
+    Promise.reject(err)
+  );
   return Promise.resolve(response);
 });
+
+export const retrieveSinglePaperInfo = createAsyncThunk(
+  "retrieve-single-paper",
+  async ({ userId, paperId, token }) => {
+    const response = await graphqlQuery(getSinglePaperInfo(userId, paperId), token).catch((err) =>
+      Promise.reject(err)
+    );
+    return response.data;
+  }
+);
 
 const initialState = {
   paperCode: "",
@@ -35,7 +46,17 @@ const CodeEnviroment = createSlice({
   },
   extraReducers: {
     [registerPaperInfo.fulfilled]: (state, { payload }) => {
-      return { ...payload };
+      return { ...payload?.data?.insert_paperTable?.returning[0] };
+    },
+    [registerPaperInfo.rejected]: (state) => {
+      return state;
+    },
+    [retrieveSinglePaperInfo.fulfilled]: (state, { payload }) => {
+      const obj = payload.paperTable[0]
+      return { ...state, ...obj, paperCode: obj.paperCode ? atob(obj.paperCode) : '' };
+    },
+    [retrieveSinglePaperInfo.rejected]: (state) => {
+      return state;
     },
   },
 });

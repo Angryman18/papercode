@@ -8,11 +8,11 @@ import { useDispatch } from "react-redux";
 import { codeEnvStateUpdator } from "reducer/CodeReducer";
 
 const PaperInfo = () => {
-  const paperInfo = useSelector((state) => state.codeEnv);
+  const paperInfo = useSelector((state) => state?.codeEnv);
   const [editStatus, setEditStatus] = useState(false);
   const { pathname } = useLocation();
   const dispatch = useDispatch();
-  if (!paperInfo.paperName || !paperInfo.createdAt || pathname !== "/code") return null;
+  if (!paperInfo?.paperName || !paperInfo?.createdAt || pathname !== "/code") return null;
 
   const handleBlur = () => {
     if (editStatus) return setEditStatus(false);

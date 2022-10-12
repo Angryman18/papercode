@@ -17,12 +17,12 @@ export const Languages = [
     ext: "py",
     language_id: 71,
   },
-  {
-    display: "Java",
-    name: "java",
-    ext: "java",
-    language_id: 62,
-  },
+  // {
+  //   display: "Java",
+  //   name: "java",
+  //   ext: "java",
+  //   language_id: 62,
+  // },
   {
     display: "C++",
     name: "cpp",

@@ -45,7 +45,7 @@ const CreateModal = ({ open, toggle, loading, handleCreateButton }) => {
   };
 
   return (
-    <Dialog maxWidth='xs' fullWidth={true} open={open} onClose={toggle}>
+    <Dialog maxWidth='xs' fullWidth={true} open={open} onClose={!loading ? toggle : null}>
       <DialogTitle>Create a Blank Paper</DialogTitle>
       <DialogContent>
         <Box sx={{ py: 2, display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -79,7 +79,7 @@ const CreateModal = ({ open, toggle, loading, handleCreateButton }) => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={toggle}>Cancel</Button>
+        <Button onClick={!loading ? toggle : null}>Cancel</Button>
         <LoadingButton
           loading={loading}
           variant='contained'

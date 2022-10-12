@@ -13,7 +13,7 @@ const totalReducers = combineReducers({
 
 const rootReducer = (state, action) => {
   if (action.type === "LOGOUT") {
-    return [{}];
+    return {};
   }
   return totalReducers(state, action);
 };

@@ -22,11 +22,24 @@ const Output = () => {
   const outputResult = useSelector((state) => state.output);
 
   let showOutput;
-  switch (outputResult.status) {
+  switch (outputResult?.status?.id) {
+    case 6:
+      showOutput = outputResult.compile_output;
+      break;
     case 11:
-      showOutput = outputResult.stdout;
+      if (outputResult.stdout) {
+        showOutput = outputResult.stdout;
+      } else {
+        showOutput = outputResult.stderr;
+      }
+      break;
     default:
-      showOutput = outputResult.stdout;
+      if (!outputResult.stdout) {
+        showOutput = outputResult.compile_output;
+        break;
+      }
+      showOutput = outputResult?.stdout;
+      break;
   }
 
   const status = outputResult.status?.id;

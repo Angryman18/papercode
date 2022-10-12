@@ -1,9 +1,10 @@
-import { Button, styled, Typography, Box, Stack,} from "@mui/material";
+import { Button, styled, Typography, Box, Stack } from "@mui/material";
 import { useState, Fragment } from "react";
 import SignInModal from "./sign-in-modal";
 import { useAuthenticationStatus, useUserData, useSignOut } from "@nhost/react";
-import PaperInfo from './PaperInfo'
-
+import PaperInfo from "./PaperInfo";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const CustomTypography = styled(Typography)(({ theme }) => ({
   ...theme,
@@ -43,15 +44,17 @@ export default function MaterialNavbar() {
   );
 }
 
-
-
 const SignedComponent = ({ handleModalToggle }) => {
   const { isAuthenticated, isLoading } = useAuthenticationStatus();
   const userData = useUserData();
   const { signOut } = useSignOut();
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const handleSignOut = () => {
+    dispatch({ type: "LOGOUT" });
     signOut();
+    navigate('/home')
   };
 
   if (isLoading) return null;

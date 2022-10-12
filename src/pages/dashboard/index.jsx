@@ -1,33 +1,83 @@
 // PACKAGES
-import { useState, Fragment } from "react";
-import { useDispatch } from "react-redux";
-
-import { Box, Button } from "@mui/material";
-import CreateModal from "components/create-modal.jsx";
-
-import { registerPaperInfo } from "reducer/CodeReducer";
+import { useState, Fragment, useEffect } from "react";
+import { connect } from "react-redux";
 import { useUserId } from "@nhost/react";
 import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  styled,
+  Typography,
+} from "@mui/material";
 
-const Dashboard = () => {
+// COMPONENTS
+import CreateModal from "components/create-modal.jsx";
+import IconComponent from "components/IconComponent";
+
+// REDUCERS, SERVICES AND ACTIONS
+import { registerPaperInfo } from "reducer/CodeReducer";
+import { pushNotification } from "actions/snack.action";
+import { getUserPaper } from "service/query";
+import { retrieveSinglePaperInfo } from "reducer/CodeReducer";
+
+// HOOKS
+import useGraphqlQuery from "hooks/useGraphqlQuery";
+
+// STYLES
+import "./index.css";
+
+const MListItem = styled(ListItemButton)(({ theme }) => ({
+  ...theme,
+  "&.MuiListItemButton-divider": {
+    borderColor: theme.palette.grey["800"],
+  },
+}));
+
+const Dashboard = (props) => {
+  const { accessToken, dispatch } = props;
   const [createModal, setCreateModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [allPapers, setAllPapers] = useState([]);
   const userId = useUserId();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const [request] = useGraphqlQuery();
+
+  useEffect(() => {
+    const query = getUserPaper(userId);
+    request(query)
+      .then((res) => {
+        setAllPapers(res?.paperTable);
+      })
+      .catch(() => {
+        return pushNotification("Something Went Wrong");
+      });
+  }, [userId]);
 
   const handleCreateModal = () => {
     setCreateModal(!createModal);
   };
 
   const handlePaperCreate = async (paperInfo) => {
-    const { paperName, paperLang } = paperInfo;
-    const preaperObj = { paperName, paperLang, paperOwner: userId};
+    const { paperName, paperLang, paperLangExt } = paperInfo;
+    const preaperObj = { paperName, paperLang, paperOwner: userId, paperLangExt };
     setLoading(true);
-    const resp = await dispatch(registerPaperInfo(preaperObj));
-    console.log(resp);
+    await dispatch(registerPaperInfo({ data: preaperObj, token: accessToken }));
     setLoading(false);
-    // return navigate("/code");
+    navigate("/code");
+    return pushNotification(`Paper "${paperName}" is Created Successfully.`)
+  };
+
+  const handleClickListItem = async (paperId) => {
+    try {
+      await dispatch(retrieveSinglePaperInfo({ userId, paperId, token: accessToken }));
+      return navigate("/code");
+    } catch (err) {
+      return pushNotification("Error Fetching Paper Info");
+    }
   };
 
   return (
@@ -36,10 +86,24 @@ const Dashboard = () => {
         <Button onClick={handleCreateModal} variant='contained' color='primary' size='large'>
           Create a Paper
         </Button>
-        <hr className='mt-8' />
+        <hr className='mt-8 mb-4' />
+        <Box sx={{ color: "white" }}>
+          <List component='nav' aria-label='main mailbox folders'>
+            {allPapers?.map((item) => {
+              return (
+                <PaperListItem
+                  key={item.paperId}
+                  item={item}
+                  handleClickListItem={handleClickListItem}
+                />
+              );
+            })}
+          </List>
+        </Box>
       </Box>
       <CreateModal
         open={createModal}
+        loading={loading}
         handleCreateButton={handlePaperCreate}
         toggle={handleCreateModal}
       />
@@ -47,4 +111,21 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+// SINGLE PAPER FILE
+const PaperListItem = ({ item, handleClickListItem }) => {
+  return (
+    <MListItem
+      onClick={handleClickListItem.bind(null, item.paperId)}
+      className='select-item'
+      divider={true}
+    >
+      <ListItemIcon sx={{ mx: 1 }}>
+        <IconComponent value={item.paperLangExt} className='text-white w-12 h-12' />
+      </ListItemIcon>
+      <ListItemText primary={item.paperName} />
+      <Typography variant='caption'>{item.createdAt}</Typography>
+    </MListItem>
+  );
+};
+
+export default connect()(Dashboard);

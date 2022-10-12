@@ -6,8 +6,10 @@ import Layout from "./Layout.jsx";
 import HomeScreen from "pages/home-screen/index.jsx";
 import CodeScreen from "pages/code-screen/index.jsx";
 import Dashboard from "pages/dashboard/index.jsx";
+import { useAccessToken } from "@nhost/react";
 
 export default function AppRouting() {
+  const accessToken = useAccessToken()
   const routes = useRoutes([
     {
       path: "/",
@@ -19,11 +21,11 @@ export default function AppRouting() {
         },
         {
           path: "/code",
-          element: <PublicRoute Component={CodeScreen} />,
+          element: <PublicRoute accessToken={accessToken} Component={CodeScreen} />,
         },
         {
           path: "/home",
-          element: <PrivateRoute Component={Dashboard} />,
+          element: <PrivateRoute accessToken={accessToken} Component={Dashboard} />,
         },
       ],
     },
