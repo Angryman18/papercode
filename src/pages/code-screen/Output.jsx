@@ -14,6 +14,7 @@ const OutputBox = styled(Box)(({ theme }) => ({
 
 const MTypography = styled(Typography)(({ theme }) => ({
   ...theme,
+  display: 'block',
   fontFamily: "Fira Code",
   whiteSpace: "pre-line;",
 }));
@@ -65,6 +66,7 @@ const Output = () => {
         Output
       </MTypography>
       <MTypography variant='caption'>Presss Ctrl + Enter to run your code</MTypography>
+      <MTypography variant='caption'>Presss Ctrl + S to to save your code</MTypography>
       <OutputLoader />
     </OutputBox>
   );

@@ -32,6 +32,10 @@ const PaperInfo = () => {
       }
     };
 
+    const handleSave = (e) => {
+      if (e.key === "Enter") return handleSaveHandler();
+    };
+
     if (editStatus) {
       return (
         <>
@@ -44,9 +48,11 @@ const PaperInfo = () => {
               },
             }}
             size='small'
+            onKeyUp={handleSave}
             defaultValue={paperName.current}
             onChange={handleOnChange}
             color='primary'
+            onBlur={handleBlur}
             autoFocus
           />
           <Button variant='contained' onClick={handleSaveHandler} size='small'>
@@ -60,7 +66,6 @@ const PaperInfo = () => {
           <Typography>{paperInfo.paperName}</Typography>
           <AiFillEdit
             onClick={() => setEditStatus(!editStatus)}
-            onBlur={handleBlur}
             className='w-4.5 h-4.5 hover:cursor-pointer hover:text-blue'
           />
         </>

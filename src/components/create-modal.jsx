@@ -39,13 +39,26 @@ const CreateModal = ({ open, toggle, loading, handleCreateButton }) => {
   const createPaperHandler = (e) => {
     e.preventDefault();
     if (!paperInfo.paperLang || !paperInfo.paperName) return;
-    const paperLangExt = Languages.find(i => i.name === paperInfo.paperLang).ext
-    paperInfo.paperLangExt = paperLangExt
+    const paperLangExt = Languages.find((i) => i.name === paperInfo.paperLang).ext;
+    paperInfo.paperLangExt = paperLangExt;
     handleCreateButton(paperInfo);
   };
 
+  const handleKeyUp = (e) => {
+    if (e.key === "Enter") {
+      if (!paperInfo.paperLang || paperInfo.paperName.length < 3) return;
+      createPaperHandler(e);
+    }
+  };
+
   return (
-    <Dialog maxWidth='xs' fullWidth={true} open={open} onClose={!loading ? toggle : null}>
+    <Dialog
+      onKeyUp={handleKeyUp}
+      maxWidth='xs'
+      fullWidth={true}
+      open={open}
+      onClose={!loading ? toggle : null}
+    >
       <DialogTitle>Create a Blank Paper</DialogTitle>
       <DialogContent>
         <Box sx={{ py: 2, display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -60,7 +73,11 @@ const CreateModal = ({ open, toggle, loading, handleCreateButton }) => {
               value={paperInfo.paperLang}
             >
               {Languages.map((item) => {
-                return <MenuItem key={item.ext} value={item.name}>{item.display}</MenuItem>;
+                return (
+                  <MenuItem key={item.ext} value={item.name}>
+                    {item.display}
+                  </MenuItem>
+                );
               })}
             </Select>
           </FormControl>

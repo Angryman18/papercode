@@ -17,7 +17,7 @@ import "./home-screen.scss";
 import { createPaper } from "reducer/CodeReducer";
 
 // UTILS
-import strings from "./type-strings";
+import { TypeStrings as strings } from "./type-strings";
 import { pushNotification } from "actions/snack.action";
 
 const CustomTypography = styled(Box)(({ theme }) => ({

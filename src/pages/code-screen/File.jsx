@@ -28,7 +28,7 @@ const File = () => {
         className='rounded-md bg-orange-900 no-select hover:bg-orange-800 duration-75 flex gap-x-2 items-center'
         sx={{ color: "#fff", px: 1, py: 0.5, cursor: "pointer" }}
       >
-        <IconComponent className='h-4.5 w-4.5' />
+        <IconComponent smallIcons={true} className='h-4.5 w-4.5' />
          {'main.' + paperLangExt}
       </Box>
     </Box>

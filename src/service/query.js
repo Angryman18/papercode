@@ -81,3 +81,17 @@ export const savePaperCode = (userId, paperCode, paperId) => {
       }
     }`;
 };
+
+export const changePaperName = (userId, paperId, paperName) => {
+  return `
+  mutation myMutaiton {
+      update_paperTable(
+        where: {paperOwner: {_eq: "${userId}"}, paperId: {_eq: "${paperId}"}},
+        _set: {paperName: "${paperName}"}
+      ) {
+        returning {
+          paperName
+        }
+      }
+    }`;
+};
