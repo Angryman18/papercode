@@ -5,7 +5,8 @@ import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { AiFillEdit } from "react-icons/ai";
 import { useDispatch } from "react-redux";
-import { codeEnvStateUpdator } from "reducer/CodeReducer";
+import { codeEnvStateUpdator, changePaperName } from "reducer/CodeReducer";
+import { useAccessToken, useAuthenticated, useUserId } from "@nhost/react";
 
 const PaperInfo = () => {
   const paperInfo = useSelector((state) => state?.codeEnv);
@@ -21,12 +22,22 @@ const PaperInfo = () => {
 
   const EditComponent = () => {
     const paperName = useRef(paperInfo.paperName);
+    const paperId = paperInfo.paperId;
+    const isAuthenticated = useAuthenticated();
+    const userId = useUserId();
+    const accessToken = useAccessToken();
     const handleOnChange = (e) => {
       paperName.current = e.target.value;
     };
 
-    const handleSaveHandler = () => {
+    const handleSaveHandler = async () => {
       if (paperName.current) {
+        if (isAuthenticated) {
+          await dispatch(
+            changePaperName({ data: { paperName: paperName.current, paperId, userId }, token: accessToken })
+          );
+          return setEditStatus(false);
+        }
         dispatch(codeEnvStateUpdator({ state: "paperName", stateValue: paperName.current }));
         setEditStatus(false);
       }

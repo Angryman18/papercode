@@ -1,5 +1,5 @@
 // PACKAGES
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useUserId } from "@nhost/react";
 import { connect } from "react-redux";
 
@@ -13,36 +13,59 @@ import { pushNotification } from "actions/snack.action";
 import useCodeRunner from "hooks/useCodeRunner";
 import { utilStateSetter } from "reducer/UtilsReducer";
 import { savePaperCode } from "service/query";
+import { registerPaperInfo } from "reducer/CodeReducer";
 
 // MISC
 import useGraphqlQuery from "hooks/useGraphqlQuery";
 import { Languages } from "helper/languages";
 
 const CodeScreen = (props) => {
-  const { dispatch, sourceCode, paperId, runner, paperLangExt, isAuthenticated } = props;
+  const {
+    dispatch,
+    codeEnv: { paperCode, paperLangExt, paperLang, paperName, paperSync, paperId },
+    runner,
+    isAuthenticated,
+    accessToken,
+  } = props;
+
   const [executeCode] = useCodeRunner(dispatch);
   const userId = useUserId();
   const [request] = useGraphqlQuery();
 
   const language_id = Languages.find((i) => i.ext === paperLangExt)?.language_id;
 
-  console.log(paperId, language_id)
+  // SYNCING THE PAPAER HADNLER
+  const paperSyncHandler = useCallback(() => {
+    const data = { paperLang, paperLangExt, paperName, paperOwner: userId, paperCode: btoa(paperCode) };
+    dispatch(registerPaperInfo({ data, token: accessToken })).then(() => {
+      return pushNotification("Paper Synced");
+    });
+  }, [paperLang, paperLangExt, paperName, accessToken, dispatch, userId, paperCode]);
 
+  // SYNCING THE PAPER EXECUTION
+  useEffect(() => {
+    if (paperSync === false && isAuthenticated && !paperId) {
+      paperSyncHandler();
+    }
+  }, [paperSync, isAuthenticated, paperSyncHandler, paperId]);
+
+  // CODE EXECUTION
   useEffect(() => {
     if (runner) {
-      executeCode({ language_id, sourceCode }).finally(() => {
+      executeCode({ language_id, sourceCode: paperCode }).finally(() => {
         dispatch(utilStateSetter({ state: "runner", stateValue: false }));
       });
     }
-  }, [runner, dispatch, language_id, sourceCode, executeCode]);
+  }, [runner, dispatch, language_id, paperCode, executeCode]);
 
+  // KEYBOARD EVENTS
   useEffect(() => {
     const saveEvent = async (e) => {
       if (e.ctrlKey && e.key === "s") {
         e.preventDefault();
         if (isAuthenticated) {
           try {
-            const query = savePaperCode(userId, btoa(sourceCode), paperId);
+            const query = savePaperCode(userId, btoa(paperCode), paperId);
             await request(query);
             return pushNotification("Progress is Saved.");
           } catch (err) {
@@ -52,28 +75,26 @@ const CodeScreen = (props) => {
         return pushNotification("Please Login to Save Your Progress.");
       } else if (e.ctrlKey && e.key === "Enter") {
         e.preventDefault();
-        executeCode({ language_id, sourceCode });
+        executeCode({ language_id, sourceCode: paperCode });
       }
     };
     window.addEventListener("keydown", saveEvent);
     return () => window.removeEventListener("keydown", saveEvent);
-  }, [executeCode, isAuthenticated, sourceCode, language_id, request, paperId, userId]);
+  }, [executeCode, request, isAuthenticated, paperCode, language_id, paperId, userId]);
 
   return (
     <div className='text-white flex'>
       <File />
-      <CodeEditor />
-      <Output />
+      <CodeEditor dispatch={dispatch} />
+      <Output dispatch={dispatch} />
     </div>
   );
 };
 
 const props = (state) => {
-  const sourceCode = state?.codeEnv?.paperCode;
-  const paperId = state?.codeEnv?.paperId;
   const runner = state?.utils.runner;
-  const paperLangExt = state?.codeEnv?.paperLangExt;
-  return { sourceCode, paperId, runner, paperLangExt };
+  const codeEnv = state?.codeEnv;
+  return { runner, codeEnv };
 };
 
 export default connect(props)(CodeScreen);

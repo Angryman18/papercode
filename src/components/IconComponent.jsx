@@ -10,27 +10,27 @@ import { LanguageSyntax as ext } from "helper/languages";
 const IconComponent = (props) => {
   const paperLangExt = useSelector((state) => state?.codeEnv?.paperLangExt);
   const value = props?.value || paperLangExt;
-  const smallIcons = props.smallIcons;
+  const {smallIcon, ...rest} = props
 
   switch (value) {
     case ext.JAVASCRIPT:
-      return <DiJavascript1 {...props} />;
+      return <DiJavascript1 {...rest} />;
     case ext.JAVA:
-      return <DiJava {...props} />;
+      return <DiJava {...rest} />;
     case ext["C++"]:
-      return <SiCplusplus {...props} />;
+      return <SiCplusplus {...rest} />;
     case ext.TYPESCRIPT:
-      return <SiTypescript {...props} className={!smallIcons && 'h-10 w-10 text-white'} />; // overwriting className prop coz typscript icon is giant big
+      return <SiTypescript {...rest} className={!smallIcon && 'h-10 w-10 text-white'} />; // overwriting className prop coz typscript icon is giant big
     case ext.PYTHON:
-      return <DiPython {...props} />;
+      return <DiPython {...rest} />;
     default:
-      return <HiOutlineNewspaper {...props} />;
+      return <HiOutlineNewspaper {...rest} />;
   }
 };
 
 IconComponent.defaultProps = {
   value: null,
-  smallIcons: null
+  smallIcon: false
 };
 
 export default IconComponent;

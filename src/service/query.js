@@ -11,7 +11,7 @@ export const createPaper = (data) => {
   return `
     mutation myMutaiton {
         insert_paperTable(
-          objects: {paperLang: "${data.paperLang}", paperName: "${data.paperName}", paperOwner: "${data.paperOwner}", paperLangExt: "${data.paperLangExt}"}
+          objects: {paperLang: "${data.paperLang}", paperCode: "${data.paperCode ?? ''}", paperName: "${data.paperName}", paperOwner: "${data.paperOwner}", paperLangExt: "${data.paperLangExt}"}
         ) {
           returning {
             paperId

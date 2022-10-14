@@ -1,5 +1,5 @@
 // PACKAGES
-import { useState, Fragment, useEffect } from "react";
+import { useState, Fragment, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { useUserId } from "@nhost/react";
 import { useNavigate } from "react-router-dom";
@@ -24,8 +24,9 @@ import { pushNotification } from "actions/snack.action";
 import { getUserPaper } from "service/query";
 import { retrieveSinglePaperInfo } from "reducer/CodeReducer";
 
-// HOOKS
+// HOOKS & UTILS
 import useGraphqlQuery from "hooks/useGraphqlQuery";
+import { dateCalculator } from "helper/date-calc";
 
 // STYLES
 import "./index.css";
@@ -46,16 +47,18 @@ const Dashboard = (props) => {
   const navigate = useNavigate();
   const [request] = useGraphqlQuery();
 
+  const requestHandler = useRef(request)
+
   useEffect(() => {
     const query = getUserPaper(userId);
-    request(query)
+    requestHandler.current(query)
       .then((res) => {
         setAllPapers(res?.paperTable);
       })
       .catch(() => {
         return pushNotification("Something Went Wrong");
       });
-  }, [userId]);
+  }, [userId, requestHandler]);
 
   const handleCreateModal = () => {
     setCreateModal(!createModal);
@@ -68,7 +71,7 @@ const Dashboard = (props) => {
     await dispatch(registerPaperInfo({ data: preaperObj, token: accessToken }));
     setLoading(false);
     navigate("/code");
-    return pushNotification(`Paper "${paperName}" is Created Successfully.`)
+    return pushNotification(`Paper "${paperName}" is Created Successfully.`);
   };
 
   const handleClickListItem = async (paperId) => {
@@ -76,6 +79,7 @@ const Dashboard = (props) => {
       await dispatch(retrieveSinglePaperInfo({ userId, paperId, token: accessToken }));
       return navigate("/code");
     } catch (err) {
+      console.log(err)
       return pushNotification("Error Fetching Paper Info");
     }
   };
@@ -87,7 +91,12 @@ const Dashboard = (props) => {
           Create a Paper
         </Button>
         <hr className='mt-8 mb-4' />
-        <Box sx={{ color: "white" }}>
+        <Box sx={{ color: "white", height: "70vh", overflowY: "auto" }}>
+          {allPapers.length === 0 && (
+            <Typography sx={{ textAlign: "center", color: '#949494' }}>
+              No Paper Found. Please Create a Paper
+            </Typography>
+          )}
           <List component='nav' aria-label='main mailbox folders'>
             {allPapers?.map((item) => {
               return (
@@ -123,7 +132,7 @@ const PaperListItem = ({ item, handleClickListItem }) => {
         <IconComponent value={item.paperLangExt} className='text-white w-12 h-12' />
       </ListItemIcon>
       <ListItemText primary={item.paperName} />
-      <Typography variant='caption'>{item.createdAt}</Typography>
+      <Typography variant='caption'>{dateCalculator(item.createdAt)}</Typography>
     </MListItem>
   );
 };

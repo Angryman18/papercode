@@ -4,7 +4,7 @@ import SignInModal from "./sign-in-modal";
 import { useAuthenticationStatus, useUserData, useSignOut } from "@nhost/react";
 import PaperInfo from "./PaperInfo";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const CustomTypography = styled(Typography)(({ theme }) => ({
   ...theme,
@@ -34,7 +34,9 @@ export default function MaterialNavbar() {
     <Fragment>
       <Box className='flex justify-between px-8 md:px-16 h-16 mobile:h-20 items-center'>
         <Stack direction='row' alignItems='center' spacing={1} sx={{ px: 2, color: "white" }}>
-          <CustomTypography>Paper Code</CustomTypography>
+          <CustomTypography>
+            <Link to='/'>Paper Code</Link>
+          </CustomTypography>
           <PaperInfo />
         </Stack>
         <SignedComponent handleModalToggle={handleModalToggle} />

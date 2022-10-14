@@ -1,14 +1,13 @@
 // PACKAGES
 import Editor from "@monaco-editor/react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 // MISC
 import { writeCode } from "reducer/CodeReducer";
 import { utilStateSetter } from "reducer/UtilsReducer";
 
-const CodeEditor = () => {
+const CodeEditor = ({ dispatch }) => {
   const writtenCode = useSelector((state) => state.codeEnv.paperCode);
   const language = useSelector((state) => state.codeEnv.paperLang);
-  const dispatch = useDispatch();
 
   const handleEditorChange = (val, e) => {
     dispatch(writeCode({ paperCode: val }));

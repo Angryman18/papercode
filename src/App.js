@@ -1,7 +1,11 @@
-import AppRouting from "router/react-router";
+// VENDORS/PACKAGES
 import { BrowserRouter } from "react-router-dom";
 import { connect } from "react-redux";
+// COMPONENTS
+import AppRouting from "router/react-router";
 import Notification from "components/Notification";
+
+// ACTIONS
 import { deleteNotifications } from "actions/snack.action";
 
 function App(props) {

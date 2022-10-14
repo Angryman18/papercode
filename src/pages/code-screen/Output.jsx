@@ -1,5 +1,7 @@
 import { Box, styled, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
+import { useLayoutEffect } from "react";
+import { resetState } from "reducer/OutputReducer";
 
 const OutputBox = styled(Box)(({ theme }) => ({
   ...theme,
@@ -14,12 +16,12 @@ const OutputBox = styled(Box)(({ theme }) => ({
 
 const MTypography = styled(Typography)(({ theme }) => ({
   ...theme,
-  display: 'block',
+  display: "block",
   fontFamily: "Fira Code",
   whiteSpace: "pre-line;",
 }));
 
-const Output = () => {
+const Output = ({ dispatch }) => {
   const outputResult = useSelector((state) => state.output);
 
   let showOutput;
@@ -44,6 +46,10 @@ const Output = () => {
   }
 
   const status = outputResult.status?.id;
+
+  useLayoutEffect(() => {
+    dispatch(resetState());
+  }, [dispatch]);
 
   const OutputLoader = () => {
     if (outputResult?.loading) {

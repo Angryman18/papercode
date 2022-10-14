@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import graphqlQuery from "service/graphqlQuery";
-import { createPaper as createPaperQuery, getSinglePaperInfo } from "service/query";
+import {
+  createPaper as createPaperQuery,
+  getSinglePaperInfo,
+  changePaperName as changePaperNameQuery,
+} from "service/query";
 
 export const registerPaperInfo = createAsyncThunk("create-paper", async ({ data, token }) => {
   const response = await graphqlQuery(createPaperQuery(data), token).catch((err) =>
@@ -18,6 +22,15 @@ export const retrieveSinglePaperInfo = createAsyncThunk(
     return response.data;
   }
 );
+
+export const changePaperName = createAsyncThunk("change-paper-name", async ({ data, token }) => {
+  const { userId, paperId, paperName } = data;
+  const response = await graphqlQuery(
+    changePaperNameQuery(userId, paperId, paperName),
+    token
+  ).catch((err) => Promise.reject(err));
+  return response.data;
+});
 
 const initialState = {
   paperCode: "",
@@ -46,17 +59,21 @@ const CodeEnviroment = createSlice({
   },
   extraReducers: {
     [registerPaperInfo.fulfilled]: (state, { payload }) => {
-      return { ...payload?.data?.insert_paperTable?.returning[0] };
+      const data = payload?.data?.insert_paperTable?.returning[0];
+      return { ...data, paperCode: data?.paperCode ? atob(data.paperCode) : "" };
     },
     [registerPaperInfo.rejected]: (state) => {
       return state;
     },
     [retrieveSinglePaperInfo.fulfilled]: (state, { payload }) => {
-      const obj = payload.paperTable[0]
-      return { ...state, ...obj, paperCode: obj.paperCode ? atob(obj.paperCode) : '' };
+      const obj = payload.paperTable[0];
+      return { ...state, ...obj, paperCode: obj.paperCode ? atob(obj.paperCode) : "" };
     },
     [retrieveSinglePaperInfo.rejected]: (state) => {
       return state;
+    },
+    [changePaperName.fulfilled]: (state, { payload }) => {
+      state.paperName = payload?.update_paperTable?.returning[0]?.paperName;
     },
   },
 });

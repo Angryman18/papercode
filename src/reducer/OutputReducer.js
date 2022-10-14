@@ -14,9 +14,12 @@ const OutPutReducer = createSlice({
     updateState: (state, { payload }) => {
       state[payload.state] = payload.stateValue;
     },
+    resetState: () => {
+      return { loading: false };
+    },
   },
 });
 
 export default OutPutReducer.reducer;
-const { getOutputObject, updateState } = OutPutReducer.actions;
-export { getOutputObject, updateState };
+const { getOutputObject, updateState, resetState } = OutPutReducer.actions;
+export { getOutputObject, updateState, resetState };

@@ -1,12 +1,14 @@
+// VENDORS
 import * as React from "react";
 import { useRoutes } from "react-router-dom";
+import { useAccessToken } from "@nhost/react";
+// COMPONENTS
 import PrivateRoute from "./PrivateRoute.js";
 import PublicRoute from "./PublicRoute.js";
 import Layout from "./Layout.jsx";
 import HomeScreen from "pages/home-screen/index.jsx";
 import CodeScreen from "pages/code-screen/index.jsx";
 import Dashboard from "pages/dashboard/index.jsx";
-import { useAccessToken } from "@nhost/react";
 
 export default function AppRouting() {
   const accessToken = useAccessToken()
