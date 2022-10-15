@@ -1,7 +1,6 @@
 import { DialogTitle, DialogContent, Dialog, Box, Typography, Button } from "@mui/material";
 import { FcGoogle } from "react-icons/fc";
 import { BsGithub } from "react-icons/bs";
-import nhost from "helper/nhost";
 
 const SignInButton = ({ Component, text, handleAuth, provider }) => {
   return (
