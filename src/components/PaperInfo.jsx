@@ -15,11 +15,6 @@ const PaperInfo = () => {
   const dispatch = useDispatch();
   if (!paperInfo?.paperName || !paperInfo?.createdAt || pathname !== "/code") return null;
 
-  const handleBlur = () => {
-    if (editStatus) return setEditStatus(false);
-    return;
-  };
-
   const EditComponent = () => {
     const paperName = useRef(paperInfo.paperName);
     const paperId = paperInfo.paperId;
@@ -63,7 +58,6 @@ const PaperInfo = () => {
             defaultValue={paperName.current}
             onChange={handleOnChange}
             color='primary'
-            onBlur={handleBlur}
             autoFocus
           />
           <Button variant='contained' onClick={handleSaveHandler} size='small'>
