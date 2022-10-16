@@ -12,16 +12,20 @@ import {
   ListItemText,
   styled,
   Typography,
+  Stack,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 // COMPONENTS
 import CreateModal from "components/create-modal.jsx";
 import IconComponent from "components/IconComponent";
+import DeleteModal from "./delete-modal";
 
 // REDUCERS, SERVICES AND ACTIONS
 import { registerPaperInfo } from "reducer/CodeReducer";
 import { pushNotification } from "actions/snack.action";
-import { getUserPaper } from "service/query";
+import { getUserPaper, deletePaper } from "service/query";
 import { retrieveSinglePaperInfo } from "reducer/CodeReducer";
 
 // HOOKS & UTILS
@@ -43,15 +47,18 @@ const Dashboard = (props) => {
   const [createModal, setCreateModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [allPapers, setAllPapers] = useState([]);
+  const [deleteModal, setDeleteModal] = useState(false);
   const userId = useUserId();
   const navigate = useNavigate();
   const [request] = useGraphqlQuery();
 
-  const requestHandler = useRef(request)
+  const mountPaperInfo = useRef(null);
+  const requestHandler = useRef(request);
 
   useEffect(() => {
     const query = getUserPaper(userId);
-    requestHandler.current(query)
+    requestHandler
+      .current(query)
       .then((res) => {
         setAllPapers(res?.paperTable);
       })
@@ -74,14 +81,29 @@ const Dashboard = (props) => {
     return pushNotification(`Paper "${paperName}" is Created Successfully.`);
   };
 
+  const deleteModalToggle = (e) => {
+    mountPaperInfo.current = e
+    return setDeleteModal(!deleteModal);
+  };
+
   const handleClickListItem = async (paperId) => {
     try {
       await dispatch(retrieveSinglePaperInfo({ userId, paperId, token: accessToken }));
       return navigate("/code");
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return pushNotification("Error Fetching Paper Info");
     }
+  };
+
+  const handleDeleteAction = async () => {
+    const {paperId} = mountPaperInfo.current 
+    const response = await request(deletePaper(userId, paperId)).catch(err => pushNotification('Error Deleeting Paper'));
+    const deletedId = response?.delete_paperTable?.returning[0]?.paperId
+    const papers = allPapers.filter(i => i.paperId !== deletedId);
+    setAllPapers(papers);
+    deleteModalToggle(null);
+    return pushNotification('Paper Delete Successfully')
   };
 
   return (
@@ -93,7 +115,7 @@ const Dashboard = (props) => {
         <hr className='mt-8 mb-4' />
         <Box sx={{ color: "white", height: "70vh", overflowY: "auto" }}>
           {allPapers.length === 0 && (
-            <Typography sx={{ textAlign: "center", color: '#949494' }}>
+            <Typography sx={{ textAlign: "center", color: "#949494" }}>
               No Paper Found. Please Create a Paper
             </Typography>
           )}
@@ -104,6 +126,7 @@ const Dashboard = (props) => {
                   key={item.paperId}
                   item={item}
                   handleClickListItem={handleClickListItem}
+                  deleteModalToggle={deleteModalToggle.bind(null, item)}
                 />
               );
             })}
@@ -116,24 +139,35 @@ const Dashboard = (props) => {
         handleCreateButton={handlePaperCreate}
         toggle={handleCreateModal}
       />
+      <DeleteModal
+        paperInfo={mountPaperInfo.current}
+        toggle={deleteModalToggle}
+        showModal={deleteModal}
+        handleDeleteAction={handleDeleteAction}
+      />
     </Fragment>
   );
 };
 
 // SINGLE PAPER FILE
-const PaperListItem = ({ item, handleClickListItem }) => {
+const PaperListItem = ({ item, handleClickListItem, deleteModalToggle }) => {
   return (
-    <MListItem
-      onClick={handleClickListItem.bind(null, item.paperId)}
-      className='select-item'
-      divider={true}
-    >
-      <ListItemIcon sx={{ mx: 1 }}>
-        <IconComponent value={item.paperLangExt} className='text-white w-12 h-12' />
-      </ListItemIcon>
-      <ListItemText primary={item.paperName} />
-      <Typography variant='caption'>{dateCalculator(item.createdAt)}</Typography>
-    </MListItem>
+    <Stack direction='row'>
+      <MListItem
+        onClick={handleClickListItem.bind(null, item.paperId)}
+        className='select-item'
+        divider={true}
+      >
+        <ListItemIcon sx={{ mx: 1 }}>
+          <IconComponent value={item.paperLangExt} className='text-white w-12 h-12' />
+        </ListItemIcon>
+        <ListItemText primary={item.paperName} />
+        <Typography variant='caption'>{dateCalculator(item.createdAt)}</Typography>
+      </MListItem>
+      <IconButton onClick={deleteModalToggle} aria-label='delete'>
+        <DeleteIcon color='primary' fontSize='medium' />
+      </IconButton>
+    </Stack>
   );
 };
 

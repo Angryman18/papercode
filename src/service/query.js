@@ -11,7 +11,11 @@ export const createPaper = (data) => {
   return `
     mutation myMutaiton {
         insert_paperTable(
-          objects: {paperLang: "${data.paperLang}", paperCode: "${data.paperCode ?? ''}", paperName: "${data.paperName}", paperOwner: "${data.paperOwner}", paperLangExt: "${data.paperLangExt}"}
+          objects: {paperLang: "${data.paperLang}", paperCode: "${
+    data.paperCode ?? ""
+  }", paperName: "${data.paperName}", paperOwner: "${data.paperOwner}", paperLangExt: "${
+    data.paperLangExt
+  }"}
         ) {
           returning {
             paperId
@@ -91,6 +95,19 @@ export const changePaperName = (userId, paperId, paperName) => {
       ) {
         returning {
           paperName
+        }
+      }
+    }`;
+};
+
+export const deletePaper = (userId, paperId) => {
+  return `
+  mutation myMutaiton {
+      delete_paperTable(
+        where: {paperOwner: {_eq: "${userId}"}, paperId: {_eq: "${paperId}"}},
+      ) {
+        returning {
+          paperId
         }
       }
     }`;
